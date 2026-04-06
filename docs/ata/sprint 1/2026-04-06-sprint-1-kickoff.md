@@ -56,7 +56,6 @@ Responsável pelas tarefas de documentação:
 - Devs revisam drafts das tasks técnicas e selecionam prioridades no Planning  
 - Revisão final do objetivo da Sprint 1 no Planning  
 - Criar Sprint Backlog no GitHub Projects (tarefas por módulo e responsabilidade)  
-- Definir duração da Sprint 1 (sugestão: 1 semana)  
 
 ---
 
