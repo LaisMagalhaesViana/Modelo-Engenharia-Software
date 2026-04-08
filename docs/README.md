@@ -13,6 +13,8 @@ Sistema desenvolvido para controle de despesas pessoais, com foco em organizaç�
 **Reuniões já registradas:**
 - [Kick-off – 06/04/2026](./ata/sprint%201/2026-04-06-sprint-1-kickoff.md)
 - [Planning – 07/04/2026](./ata/sprint%201/2026-04-07-planning.md)
+- [Daily – 06/04/2026](./ata/sprint%201/2026-04-08-sprint-1-daily.md)
+
 
 ---
 
