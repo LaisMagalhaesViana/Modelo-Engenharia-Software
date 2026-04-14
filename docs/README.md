@@ -11,9 +11,13 @@ Sistema desenvolvido para controle de despesas pessoais, com foco em organizaç�
 - [Sprint 01](./ata/sprint%201/)
 
 **Reuniões já registradas:**
-- [Kick-off – 06/04/2026](./ata/sprint%201/2026-04-06-sprint-1-kickoff.md)
-- [Planning – 07/04/2026](./ata/sprint%201/2026-04-07-planning.md)
-- [Daily – 06/04/2026](./ata/sprint%201/2026-04-08-sprint-1-daily.md)
+- [Kick-off – 06/04/2026](./ata/sprint%200/2026-04-06-kickoff.md)
+- [Planning – 07/04/2026](./ata/sprint%200/2026-04-07-planning.md)
+- [Daily – 08/04/2026](./ata/sprint%200/2026-04-08-daily.md)
+- [Review – 09/04/2026](./ata/sprint%200/2026-04-09-review.md)
+- [Daily – 10/04/2026](./ata/sprint%200/2026-04-10-daily.md)
+- [Retrospectiva – 13/04/2026](./ata/sprint%200/2026-04-13-retrospectiva.md)
+
 
 
 ---
