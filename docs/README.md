@@ -17,6 +17,9 @@ Sistema desenvolvido para controle de despesas pessoais, com foco em organizaç�
 - [Review – 09/04/2026](./ata/sprint%200/2026-04-09-review.md)
 - [Daily – 10/04/2026](./ata/sprint%200/2026-04-10-daily.md)
 - [Retrospectiva – 13/04/2026](./ata/sprint%200/2026-04-13-retrospectiva.md)
+- [Planning – 14/04/2026](./docs/atas/2026-04-14-planning.md)
+- [Daily – 15/04/2026](./docs/atas/2026-04-15-daily.md)
+- [Daily – 16/04/2026](./docs/atas/2026-04-16-daily.md)
 
 
 
