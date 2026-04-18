@@ -25,6 +25,9 @@
 				"noUnknownAtRules": "off",
 				"noExplicitAny": "off"
 			},
+			"style": {
+				"useImportType": "off"
+			},
 			"complexity": {
 				"useArrowFunction": "off"
 			}
