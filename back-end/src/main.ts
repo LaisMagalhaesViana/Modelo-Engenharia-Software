@@ -8,7 +8,7 @@ async function bootstrap() {
 	app.enableCors({
 		origin: [
 			'http://localhost:5173',
-			'https://SEU-FRONTEND.vercel.app',
+			'https://modelo-engenharia-software-ig8sf8rup-allukazs-projects.vercel.app',
 		],
 		credentials: true,
 	});
