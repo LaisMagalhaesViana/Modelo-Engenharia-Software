@@ -1,0 +1,61 @@
+generator client {
+  provider        = "prisma-client"
+  output          = "../src/generated/prisma"
+  moduleFormat    = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum TipoCategoria {
+  RECEITA
+  DESPESA
+}
+enum TipoLancamento {
+  RECEITA
+  DESPESA
+}
+enum FormaPagamento {
+  PARCELAS
+  CARTAO_CREDITO
+  CARTAO_DEBITO
+  PIX
+  TRANSFERENCIA
+}
+enum TipoConta {
+  CORRENTE
+  POUPANÇA
+}
+
+
+
+model User{
+  id  String @id @default(uuid())
+  name String
+  email String
+  hashedPassword String
+  monthlyIncome Decimal
+  createdAt DateTime
+}
+
+model Category {
+  id  String @id @default(uuid())
+  name String
+  categoryType TipoCategoria
+  color String
+  createdAt DateTime
+}
+
+// Lançamento
+model Entry {
+  id  String @id @default(uuid())
+  type TipoLancamento
+  value Decimal
+  date DateTime
+  description String
+  paymentMethod FormaPagamento
+  account TipoConta
+  installmentsQuantity Int // parcelas
+  createdAt DateTime
+}
