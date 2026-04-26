@@ -8,6 +8,7 @@ datasource db {
   provider = "postgresql"
 }
 
+//
 enum TipoCategoria {
   RECEITA
   DESPESA
@@ -29,7 +30,7 @@ enum TipoConta {
 }
 
 
-
+//
 model User{
   id  String @id @default(uuid())
   name String
@@ -37,6 +38,7 @@ model User{
   hashedPassword String
   monthlyIncome Decimal
   createdAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 model Category {
@@ -45,6 +47,7 @@ model Category {
   categoryType TipoCategoria
   color String
   createdAt DateTime
+  updatedAt DateTime @updatedAt
 }
 
 // Lançamento
@@ -58,4 +61,5 @@ model Entry {
   account TipoConta
   installmentsQuantity Int // parcelas
   createdAt DateTime
+  updatedAt DateTime @updatedAt
 }
