@@ -6,9 +6,11 @@ import { HealthModule } from './health/health.module';
 import { UserModule } from './user/user.module';
 import { PrismaService } from './prisma/prisma.service';
 import { CategoryModule } from './category/category.module';
+import { PrismaModule } from './prisma/prisma.module';
+import { TransactionModule } from './transaction/transaction.module';
 
 @Module({
-	imports: [HealthModule, AuthModule, UserModule, CategoryModule],
+	imports: [HealthModule, AuthModule, UserModule, CategoryModule, PrismaModule, TransactionModule],
 	controllers: [AppController],
 	providers: [AppService, PrismaService],
 })
