@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Decimal } from '@prisma/client/runtime/client';
 import { IsEmail, IsNotEmpty, IsNumber, IsPhoneNumber, IsString, MinLength } from 'class-validator';
 
 export class UpdateUserDto {
@@ -19,16 +20,6 @@ export class UpdateUserDto {
 	email!: string;
 
 	@ApiProperty({
-		description: 'Senha de acesso (mínimo 8 caracteres)',
-		example: 'Senha@123',
-		minLength: 8,
-		format: 'password',
-	})
-	@IsString({ message: 'A senha deve ser uma string.' })
-	@MinLength(8, { message: 'A senha deve ter pelo menos 8 caracteres.' })
-	password!: string;
-
-	@ApiProperty({
 		description: 'Número de telefone no padrão brasileiro',
 		example: '+55 71 99999-9999',
 	})
@@ -44,5 +35,5 @@ export class UpdateUserDto {
 	})
 	@IsNumber({}, { message: 'A renda mensal deve ser um valor numérico.' })
 	@IsNotEmpty({ message: 'A renda mensal é obrigatória.' })
-	monthlyIncome!: number;
+	monthlyIncome!: Decimal;
 }
