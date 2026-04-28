@@ -20,16 +20,6 @@ export class UpdateUserDto {
 	email!: string;
 
 	@ApiProperty({
-		description: 'Senha de acesso (mínimo 8 caracteres)',
-		example: 'Senha@123',
-		minLength: 8,
-		format: 'password',
-	})
-	@IsString({ message: 'A senha deve ser uma string.' })
-	@MinLength(8, { message: 'A senha deve ter pelo menos 8 caracteres.' })
-	password!: string;
-
-	@ApiProperty({
 		description: 'Número de telefone no padrão brasileiro',
 		example: '+55 71 99999-9999',
 	})
