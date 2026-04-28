@@ -14,6 +14,7 @@ model User {
   email          String     @unique
   createdAt      DateTime   @map("created_at")
   hashedPassword String     @map("hashed_password")
+  role           Role
   monthlyIncome  Decimal    @map("monthly_income")
   phoneNumber    String     @map("phone_number")
   updatedAt      DateTime   @updatedAt @map("updated_at")
@@ -71,4 +72,9 @@ enum PaymentMethod {
 enum AccountType {
   CURRENT
   SAVINGS
+}
+
+enum Role {
+  USER
+  ADMIN
 }
