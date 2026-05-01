@@ -1,65 +1,80 @@
 generator client {
-  provider        = "prisma-client"
-  output          = "../node_modules/.prisma/client"
-  moduleFormat    = "cjs"
+  provider     = "prisma-client"
+  output       = "../src/generated/prisma"
+  moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-//
-enum TipoCategoria {
-  RECEITA
-  DESPESA
-}
-enum TipoLancamento {
-  RECEITA
-  DESPESA
-}
-enum FormaPagamento {
-  PARCELAS
-  CARTAO_CREDITO
-  CARTAO_DEBITO
-  PIX
-  TRANSFERENCIA
-}
-enum TipoConta {
-  CORRENTE
-  POUPANÇA
-}
-
-
-//
-model User{
-  id  String @id @default(uuid())
-  name String
-  email String
-  hashedPassword String
-  monthlyIncome Decimal
-  createdAt DateTime
-  updatedAt DateTime @updatedAt
+model User {
+  id             String     @id @default(uuid())
+  name           String
+  email          String     @unique
+  createdAt      DateTime   @default(now()) @map("created_at")
+  hashedPassword String     @map("hashed_password")
+  role           Role
+  monthlyIncome  Decimal    @map("monthly_income")
+  phoneNumber    String     @map("phone_number")
+  updatedAt      DateTime   @updatedAt @map("updated_at")
+  categories     Category[]
+  launch         Launch[]
 }
 
 model Category {
-  id  String @id @default(uuid())
-  name String
-  categoryType TipoCategoria
-  color String
-  createdAt DateTime
-  updatedAt DateTime @updatedAt
+  id           String       @id @default(uuid())
+  name         String
+  color        String
+  categoryType CategoryType @map("category_type")
+  createdAt    DateTime     @default(now()) @map("created_at")
+  updatedAt    DateTime     @updatedAt @map("updated_at")
+  userId       String       @map("user_id")
+  user         User         @relation(fields: [userId], references: [id])
+  launch       Launch[]
 }
 
-// Lançamento
-model Entry {
-  id  String @id @default(uuid())
-  type TipoLancamento
-  value Decimal
-  date DateTime
-  description String
-  paymentMethod FormaPagamento
-  account TipoConta
-  installmentsQuantity Int // parcelas
-  createdAt DateTime
-  updatedAt DateTime @updatedAt
+model Launch {
+  id                   String        @id @default(uuid())
+  userId               String        @map("user_id")
+  categoryId           String        @map("category_id")
+  type                 launchType
+  value                Decimal
+  date                 DateTime
+  description          String
+  paymentMethod        PaymentMethod @map("payment_method")
+  account              AccountType
+  installmentsQuantity Int           @map("installments_quantity")
+  createdAt            DateTime      @default(now()) @map("created_at")
+  updatedAt            DateTime      @updatedAt @map("updated_at")
+  category             Category      @relation(fields: [categoryId], references: [id])
+  user                 User          @relation(fields: [userId], references: [id])
+}
+
+enum CategoryType {
+  INCOME
+  EXPENSES
+}
+
+enum launchType {
+  INCOME
+  EXPENSES
+}
+
+enum PaymentMethod {
+  INSTALLMENTS
+  CREDIT_CARD
+  DEBIT_CARD
+  PIX
+  TRANSFER
+}
+
+enum AccountType {
+  CURRENT
+  SAVINGS
+}
+
+enum Role {
+  USER
+  ADMIN
 }

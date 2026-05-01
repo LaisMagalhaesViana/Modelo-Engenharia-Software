@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -8,28 +8,44 @@ export class CategoryService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(createCategoryDto: CreateCategoryDto) {
+    const existingCategory = await this.prisma.category.findFirst({
+      where: {name: createCategoryDto.name}
+    })
+    if(existingCategory) throw new ConflictException('Categoria já existente. Caso queira criar uma nova, utilize outro nome.')
+
+
     return this.prisma.category.create({
-      data:createCategoryDto,
+      data: {
+        name: createCategoryDto.name,
+        color: createCategoryDto.color,
+        categoryType: createCategoryDto.categoryType,
+        userId: createCategoryDto.userId,
+      },
     });
   }
 
   async findAll() {
+    // TODO: verificação de usuário / adm vê tudo, user somente o seu
+
     return this.prisma.category.findMany();
   }
 
-  async findOne(id: number) {
-     const category = this.prisma.category.findUnique({
+  async findOne(id: string) {
+     const existingCategory = this.prisma.category.findUnique({
       where: { id },
     });
 
-    if(!category){
-      throw new NotFoundException(`Categoria de ID ${id} não encontrada.`)
+    if(!existingCategory){
+      throw new NotFoundException("Categoria não encontrada.")
     }
     
-    return category;
+    return existingCategory;
   }
 
-  async update(id: number, updateCategoryDto: UpdateCategoryDto) {
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    // TODO: verificação de usuário / adm altera tudo, user somente o seu
+
+    
     await this.findOne(id);
 
     return this.prisma.category.update({
@@ -38,7 +54,9 @@ export class CategoryService {
     });
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
+    // TODO: verificação de usuário / adm apaga tudo, user somente o seu
+
     await this.findOne(id);
     
     return this.prisma.category.delete({
