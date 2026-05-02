@@ -39,7 +39,7 @@ export default function HookFormInput<T extends FieldValues>({
 							{...field}
 							aria-invalid={fieldState.invalid}
 							placeholder={placeholder}
-							className='h-10 focus-visible:ring-green-500'
+							className='h-10 focus-visible:ring-[#1f7a6b]'
 							autoComplete='off'
 							type={inputType}
 						/>

@@ -33,7 +33,7 @@ export default function RegisterRoute() {
 							<p className='text-sm'>Já possui uma conta?</p>
 							<Link
 								to={'/auth/login'}
-								className='text-sm font-bold text-green-600'
+								className='text-sm font-bold text-[#1f7a6b]'
 							>
 								Login
 							</Link>

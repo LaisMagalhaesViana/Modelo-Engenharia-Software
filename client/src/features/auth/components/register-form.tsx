@@ -76,7 +76,7 @@ export default function RegisterForm({ ...props }: React.ComponentProps<'form'>)
 			/>
 			<Button
 				type='submit'
-				className='w-full cursor-pointer mt-4 mb-4 bg-green-600 hover:bg-green-500 h-10 text-white'
+				className='w-full cursor-pointer mt-4 mb-4 bg-[#1f7a6b] hover:bg-[#2fae8f] h-10 text-white'
 			>
 				Comece agora
 			</Button>
