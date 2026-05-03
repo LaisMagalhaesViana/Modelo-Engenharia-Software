@@ -1,70 +1,83 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsEnum, IsInt, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { TipoLancamento, FormaPagamento, TipoConta } from "../../../node_modules/.prisma/client/enums";
+import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsUUID } from "class-validator";
+import { AccountType, launchType, PaymentMethod  } from "../../generated/prisma/enums";
 
 
 export class CreateTransactionDto {
     @ApiProperty({
         description: 'Tipo de lançamento a ser feito',
-        example: 'DESPESA',
+        example: 'EXPENSES',
     })
-    @IsEnum(TipoLancamento, {message: 'O tipo deve ser \"RECEITA\" ou \"DESPESA\".'})
-    @IsNotEmpty({ message: 'Defina qual é o tipo da transação.' })
-    type!: TipoLancamento;
+    @IsEnum(launchType, { message: 'O tipo deve ser "INCOME" ou "EXPENSES".' })
+    @IsNotEmpty({ message: 'Defina qual é o tipo do lançamento.' })
+    type!: launchType;
 
     @ApiProperty({
-        description: 'Valor da compra',
-        example: '5',
+        description: 'Valor do lançamento',
+        example: 5.50,
     })
     @IsNumber()
-    @IsNotEmpty({message: 'Insira o valor da compra'})
-    amount!: number;
+    @IsNotEmpty({ message: 'Insira o valor.' })
+    value!: number;
 
     @ApiProperty({
-        description: 'Data da transação',
-        example: "26/04/2026",
+        description: 'Data do lançamento',
+        example: "2026-04-26T00:00:00.000Z",
     })
     @IsDate()
-    @IsNotEmpty({message: 'Insira a data da transação'})
+    @IsNotEmpty({ message: 'Insira a data do lançamento.' })
     date!: Date;
 
     @ApiProperty({
-        description: 'Categoria da compra',
-        example: 'Emergência',
+        description: 'ID da categoria',
+        example: 'uuid-da-categoria',
     })
     @IsString()
-    @IsNotEmpty({message: 'ID da categoria.'})
+    @IsNotEmpty({ message: 'Informe o ID da categoria.' })
     categoryId!: string;
 
     @ApiProperty({
-        description: 'Descrição da compra',
-        example: 'Papel higiênico',
+        description: 'Descrição do lançamento',
+        example: 'Compra de supermercado',
     })
     @IsString()
-    @IsNotEmpty({message: 'Descreva o motivo da compra.'})
+    @IsNotEmpty({ message: 'Descreva o lançamento.' })
     description!: string;
 
     @ApiProperty({
         description: 'Método de pagamento',
         example: 'PIX',
     })
-    @IsEnum(FormaPagamento, {message: 'A forma de pagamento deve ser: \'PARCELAS\', \'CARTAO_CREDITO\', \'CARTAO_DEBITO\', \'PIX\', \'TRANSFERENCIA\'.'})
-    @IsNotEmpty({message: 'Insira o método de pagamento'})
-    paymentMethod!: FormaPagamento;
+    @IsEnum(PaymentMethod, {
+        message: "A forma de pagamento deve ser: 'INSTALLMENTS', 'CREDIT_CARD', 'DEBIT_CARD', 'PIX', 'TRANSFER'.",
+    })
+    @IsNotEmpty({ message: 'Insira o método de pagamento.' })
+    paymentMethod!: PaymentMethod;
 
     @ApiProperty({
-        description: 'Tipo de conta usada',
-        example: 'CORRENTE',
+        description: 'Tipo de conta',
+        example: 'CURRENT',
     })
-    @IsEnum(TipoConta, {message: "O tipo de conta pode ser \'CORRENTE\' ou \'POUPANCA\'."})
-    @IsNotEmpty({message: 'Escolha o tipo de conta'})
-    accountType!: TipoConta;
+    @IsEnum(AccountType, {
+        message: "O tipo de conta deve ser 'CURRENT' ou 'SAVINGS'.",
+    })
+    @IsNotEmpty({ message: 'Escolha o tipo de conta.' })
+    account!: AccountType;
 
     @ApiProperty({
-        description: 'Quantidade de parcelas da compra',
-        example: '8',
+        description: 'Quantidade de parcelas',
+        example: 8,
+        required: false,
     })
+    @IsOptional()
     @IsNumber()
-    @IsNotEmpty({message: 'Insira a quantidade de parcelas da compra.'})
-    installments?: number;
+    installmentsQuantity?: number;
+    
+    @ApiProperty({
+        description: 'ID do usuário dono da transação',
+        example: 'uuid-do-usuario',
+    })
+    @IsUUID()
+    @IsNotEmpty({ message: 'O lançamento deve pertencer a um usuário.' })
+    userId!: string;
 }
