@@ -1,25 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import z from 'zod';
 import { Button } from '@/components/ui/button';
+import { type FormRegisterData, FormRegisterDataSchema, useRegister } from '@/lib/auth';
 import HookFormInput from './hook-form-input';
 
-const FormRegisterDataSchema = z.object({
-	name: z.string().min(1, 'Digite um nome válido'),
-	email: z.email('Digite um email válido'),
-	password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
-	monthlyIncome: z
-		.string()
-		.min(1, 'Digite um valor')
-		.refine((val) => !Number.isNaN(Number(val)) && val.trim() !== '', {
-			message: 'Digite um número válido, se estiver utilizando vírgula, use o ponto',
-		})
-		.refine((val) => Number(val) >= 0, { message: 'O rendimento deve ser maior ou igual a zero' }),
-});
+interface RegisterFormProps extends React.ComponentProps<'form'> {
+	onSuccess: () => void;
+}
 
-type FormRegisterData = z.infer<typeof FormRegisterDataSchema>;
+export default function RegisterForm({ onSuccess, ...props }: RegisterFormProps) {
+	const registering = useRegister({ onSuccess });
 
-export default function RegisterForm({ ...props }: React.ComponentProps<'form'>) {
 	const { handleSubmit, control } = useForm<FormRegisterData>({
 		resolver: zodResolver(FormRegisterDataSchema),
 		defaultValues: {
@@ -29,12 +20,8 @@ export default function RegisterForm({ ...props }: React.ComponentProps<'form'>)
 			monthlyIncome: '',
 		},
 	});
-	function onSubmit(data: FormRegisterData) {
-		const payload = {
-			...data,
-			monthlyIncome: Number(data.monthlyIncome),
-		};
-		console.log(payload);
+	async function onSubmit(data: FormRegisterData) {
+		registering.mutate(data);
 	}
 	return (
 		<form
@@ -65,6 +52,14 @@ export default function RegisterForm({ ...props }: React.ComponentProps<'form'>)
 				placeholder='Digite sua senha'
 				type='password'
 				label='Senha'
+			/>
+			<HookFormInput
+				control={control}
+				id='phoneNumber'
+				name='phoneNumber'
+				placeholder='(71) 99999-9999'
+				type='text'
+				label='Telefone'
 			/>
 			<HookFormInput
 				control={control}

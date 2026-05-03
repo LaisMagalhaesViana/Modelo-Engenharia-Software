@@ -7,7 +7,13 @@ export default function LoginRoute() {
 			<div className='p-4 h-full flex flex-col rounded-2xl lg:w-1/2'>
 				<div className='flex flex-col justify-center items-center'>
 					<div className='lg:max-w-96'>
-						<div className='self-start mb-7'>Ícone do app</div>
+						<div className='self-start mb-7'>
+							<img
+								src='/icone-marca.svg'
+								alt=''
+								width={50}
+							/>
+						</div>
 						<div className='mb-16'>
 							<h1 className='text-4xl font-semibold'>Bem vindo de volta</h1>
 							<p className='sm:text-xl'>
@@ -31,13 +37,12 @@ export default function LoginRoute() {
 				className='hidden  min-h-full w-1/2 lg:flex flex-col justify-between p-9 bg-cover bg-center  box-border rounded-2xl'
 				style={{ backgroundImage: "url('/mesh-276.png')" }}
 			>
-				<div className='text-white font-bold text-2xl text-end'>Ícone do app</div>
+				<h1 className='text-4xl font-bold text-white self-end'>Siscodep</h1>
 				<div className='text-end'>
-					<p className='text-white text-xl'>Lorem ipsum</p>
+					<p className='text-white text-xl'>Continue de onde parou.</p>
 					<h2 className='text-2xl font-bold text-white'>
-						Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta in sequi labore tenetur non.
-						Modi, labore voluptatibus ad quisquam consequuntur ab earum illo magni perferendis neque autem
-						enim, amet aspernatur!
+						Acompanhe seus gastos, visualize seus ganhos e mantenha o controle total da sua vida financeira
+						em um só lugar, com praticidade e clareza.
 					</h2>
 				</div>
 			</div>
