@@ -1,18 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link } from 'react-router';
-import z from 'zod';
 import { Button } from '@/components/ui/button';
+import { type FormLoginData, FormLoginDataSchema, useLogin } from '@/lib/auth';
 import HookFormInput from './hook-form-input';
 
-const FormLoginDataSchema = z.object({
-	email: z.email('Digite um email válido'),
-	password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
-});
+interface LoginFormProps extends React.ComponentProps<'form'> {
+	onSuccess: () => void;
+}
 
-type FormLoginData = z.infer<typeof FormLoginDataSchema>;
-
-export default function LoginForm({ ...props }: React.ComponentProps<'form'>) {
+export default function LoginForm({ onSuccess, ...props }: LoginFormProps) {
+	const login = useLogin({
+		onSuccess,
+	});
 	const { handleSubmit, control } = useForm<FormLoginData>({
 		resolver: zodResolver(FormLoginDataSchema),
 		defaultValues: {
@@ -21,7 +21,7 @@ export default function LoginForm({ ...props }: React.ComponentProps<'form'>) {
 		},
 	});
 	function onSubmit(data: FormLoginData) {
-		console.log(data);
+		login.mutate(data);
 	}
 	return (
 		<form

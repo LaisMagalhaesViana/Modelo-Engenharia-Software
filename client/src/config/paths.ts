@@ -16,4 +16,10 @@ export const paths = {
 				`/auth/login${redirectTo ? `?redirectTo=${encodeURIComponent(redirectTo)}` : ''}`,
 		},
 	},
+	app: {
+		root: {
+			path: '/app',
+			getHref: () => '/app',
+		},
+	},
 } as const;

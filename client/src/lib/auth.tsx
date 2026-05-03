@@ -1,5 +1,7 @@
 import { configureAuth } from 'react-query-auth';
+import { Navigate, useLocation } from 'react-router';
 import { z } from 'zod';
+import { paths } from '@/config/paths';
 import type { AuthResponse } from '@/types/api';
 import { api } from './api-client';
 
@@ -30,6 +32,13 @@ export const FormRegisterDataSchema = z.object({
 
 export type FormRegisterData = z.infer<typeof FormRegisterDataSchema>;
 
+export const FormLoginDataSchema = z.object({
+	email: z.email('Digite um email válido'),
+	password: z.string().min(6, 'A senha deve ter no mínimo 6 caracteres'),
+});
+
+export type FormLoginData = z.infer<typeof FormLoginDataSchema>;
+
 function registerWithEmailAndPassword(data: FormRegisterData): Promise<AuthResponse> {
 	const payload = {
 		...data,
@@ -38,12 +47,18 @@ function registerWithEmailAndPassword(data: FormRegisterData): Promise<AuthRespo
 	return api.post('auth/signup', payload);
 }
 
+const loginWithEmailAndPassword = (data: FormLoginData): Promise<AuthResponse> => {
+	return api.post('/auth/signin', data);
+};
+
 const authConfig = {
 	userFn: async () => {
 		return null;
 	},
-	loginFn: async () => {
-		return null;
+	loginFn: async (data: FormLoginData) => {
+		const response = await loginWithEmailAndPassword(data);
+		console.log(response);
+		return response;
 	},
 	registerFn: async (data: FormRegisterData) => {
 		const response = await registerWithEmailAndPassword(data);
@@ -55,3 +70,19 @@ const authConfig = {
 };
 
 export const { useUser, useLogin, useLogout, useRegister, AuthLoader } = configureAuth(authConfig);
+
+export const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+	const user = useUser();
+	const location = useLocation();
+
+	if (!user.data) {
+		return (
+			<Navigate
+				to={paths.auth.login.getHref(location.pathname)}
+				replace
+			/>
+		);
+	}
+
+	return children;
+};

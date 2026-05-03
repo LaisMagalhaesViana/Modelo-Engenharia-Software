@@ -3,6 +3,9 @@ import { useMemo } from 'react';
 import { createBrowserRouter } from 'react-router';
 import { RouterProvider } from 'react-router/dom';
 import { paths } from '@/config/paths';
+import { ProtectedRoute } from '@/lib/auth';
+
+import { default as AppRoot, ErrorBoundary as AppRootErrorBoundary } from './routes/app/root';
 
 const convert = (queryClient: QueryClient) => (m: any) => {
 	const { clientLoader, clientAction, default: Component, ...rest } = m;
@@ -27,6 +30,15 @@ export const createAppRouter = (queryClient: QueryClient) =>
 		{
 			path: paths.auth.login.path,
 			lazy: () => import('./routes/auth/login').then(convert(queryClient)),
+		},
+		{
+			path: paths.app.root.path,
+			element: (
+				<ProtectedRoute>
+					<AppRoot />
+				</ProtectedRoute>
+			),
+			ErrorBoundary: AppRootErrorBoundary,
 		},
 		{
 			path: '*',
