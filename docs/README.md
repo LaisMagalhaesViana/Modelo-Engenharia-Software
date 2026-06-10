@@ -53,6 +53,27 @@ Sistema desenvolvido para controle de despesas pessoais, com foco em organizaç�
 
 #### Sprint 4
 - [Planning – 26/05/2026](./ata/sprint-4/2026-05-26-planning.md)
+- [Daily – 27/05/2026](./ata/sprint-4/2026-05-27-daily.md)
+- [Review – 28/05/2026](./ata/sprint-4/2026-05-28-review.md)
+- [Daily – 29/05/2026](./ata/sprint-4/2026-05-29-daily.md)
+- [Retrospectiva – 01/06/2026](./ata/sprint-4/2026-06-01-retrospectiva.md)
+
+---
+
+#### Sprint 5
+
+- [Planning – 02/06/2026](./ata/sprint-5/2026-06-02-planning.md)
+- [Daily – 03/06/2026](./ata/sprint-5/2026-06-03-daily.md)
+- [Daily – 04/06/2026](./ata/sprint-5/2026-06-04-daily.md)
+- [Review – 05/06/2026](./ata/sprint-5/2026-06-05-review.md)
+- [Daily – 06/06/2026](./ata/sprint-5/2026-06-06-daily.md)
+- [Retrospectiva – 08/06/2026](./ata/sprint-5/2026-06-08-retrospectiva.md)
+
+---
+
+#### Sprint 6
+
+- [Planning – 09/06/2026](./ata/sprint-6/2026-06-09-planning.md)
 
 ---
 
