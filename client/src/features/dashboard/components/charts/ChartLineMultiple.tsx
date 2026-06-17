@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { CartesianGrid, Line, LineChart, XAxis, YAxis } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ChartContainer, ChartTooltip, ChartTooltipContent, type ChartConfig } from '@/components/ui/chart';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DashboardErrorState from '@/features/dashboard/components/states/DashboardErrorState';
 import DashboardLoadingState from '@/features/dashboard/components/states/DashboardLoadingState';
 import type { Launch } from '@/features/launches/types/launches.type';
@@ -13,9 +14,11 @@ type ChartLineMultipleProps = {
 	onRetry?: () => void;
 };
 
-type MonthlyChartData = {
-	monthKey: string;
-	monthLabel: string;
+type ChartPeriod = 'weekly' | 'monthly' | 'yearly';
+
+type PeriodChartData = {
+	periodKey: string;
+	periodLabel: string;
 	income: number;
 	expenses: number;
 };
@@ -42,71 +45,136 @@ const monthFormatter = new Intl.DateTimeFormat('pt-BR', {
 	timeZone: 'UTC',
 });
 
-function getMonthKey(date: string) {
-	return date.slice(0, 7);
+const shortDateFormatter = new Intl.DateTimeFormat('pt-BR', {
+	day: '2-digit',
+	month: '2-digit',
+	timeZone: 'UTC',
+});
+
+const periodDescriptions: Record<ChartPeriod, string> = {
+	weekly: 'Variação semanal dos lançamentos',
+	monthly: 'Variação mensal dos lançamentos',
+	yearly: 'Variação anual dos lançamentos',
+};
+
+function parseLaunchDate(date: string) {
+	const parsedDate = new Date(date);
+
+	if (Number.isNaN(parsedDate.getTime())) return null;
+
+	return parsedDate;
 }
 
-function getMonthLabel(monthKey: string) {
-	const [year, month] = monthKey.split('-').map(Number);
+function formatDateKey(date: Date) {
+	return [
+		date.getUTCFullYear(),
+		String(date.getUTCMonth() + 1).padStart(2, '0'),
+		String(date.getUTCDate()).padStart(2, '0'),
+	].join('-');
+}
+
+function getWeekStartDate(date: Date) {
+	const weekStartDate = new Date(Date.UTC(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate()));
+	const day = weekStartDate.getUTCDay();
+	const daysFromMonday = day === 0 ? 6 : day - 1;
+
+	weekStartDate.setUTCDate(weekStartDate.getUTCDate() - daysFromMonday);
+
+	return weekStartDate;
+}
+
+function getPeriodKey(date: Date, period: ChartPeriod) {
+	if (period === 'weekly') return formatDateKey(getWeekStartDate(date));
+	if (period === 'yearly') return String(date.getUTCFullYear());
+
+	return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
+}
+
+function getPeriodLabel(periodKey: string, period: ChartPeriod) {
+	if (period === 'weekly') {
+		const [year, month, day] = periodKey.split('-').map(Number);
+		const weekStartDate = new Date(Date.UTC(year, month - 1, day));
+		const weekEndDate = new Date(weekStartDate);
+
+		weekEndDate.setUTCDate(weekStartDate.getUTCDate() + 6);
+
+		return `${shortDateFormatter.format(weekStartDate)} - ${shortDateFormatter.format(weekEndDate)}`;
+	}
+
+	if (period === 'yearly') return periodKey;
+
+	const [year, month] = periodKey.split('-').map(Number);
 	const date = new Date(Date.UTC(year, month - 1, 1));
 
 	return monthFormatter.format(date).replace('.', '');
 }
 
-function addMonth(monthKey: string) {
-	const [year, month] = monthKey.split('-').map(Number);
-	const date = new Date(Date.UTC(year, month, 1));
+function addPeriod(periodKey: string, period: ChartPeriod) {
+	if (period === 'weekly') {
+		const [year, month, day] = periodKey.split('-').map(Number);
+		const date = new Date(Date.UTC(year, month - 1, day + 7));
 
-	return `${date.getUTCFullYear()}-${String(date.getUTCMonth() + 1).padStart(2, '0')}`;
-}
-
-function buildMonthRange(monthKeys: string[]) {
-	if (monthKeys.length === 0) return [];
-
-	const sortedMonthKeys = [...monthKeys].sort();
-	const firstMonth = sortedMonthKeys[0];
-	const lastMonth = sortedMonthKeys[sortedMonthKeys.length - 1];
-	const months: string[] = [];
-
-	for (let monthKey = firstMonth; monthKey <= lastMonth; monthKey = addMonth(monthKey)) {
-		months.push(monthKey);
+		return formatDateKey(date);
 	}
 
-	return months;
+	if (period === 'yearly') {
+		return String(Number(periodKey) + 1);
+	}
+
+	const [year, month] = periodKey.split('-').map(Number);
+	const date = new Date(Date.UTC(year, month, 1));
+
+	return getPeriodKey(date, 'monthly');
 }
 
-function buildMonthlyChartData(launches: Launch[]) {
-	const months = new Map<string, MonthlyChartData>();
+function buildPeriodRange(periodKeys: string[], period: ChartPeriod) {
+	if (periodKeys.length === 0) return [];
+
+	const sortedPeriodKeys = [...periodKeys].sort();
+	const firstPeriod = sortedPeriodKeys[0];
+	const lastPeriod = sortedPeriodKeys[sortedPeriodKeys.length - 1];
+	const periods: string[] = [];
+
+	for (let periodKey = firstPeriod; periodKey <= lastPeriod; periodKey = addPeriod(periodKey, period)) {
+		periods.push(periodKey);
+	}
+
+	return periods;
+}
+
+function buildChartDataByPeriod(launches: Launch[], period: ChartPeriod) {
+	const periods = new Map<string, PeriodChartData>();
 
 	for (const launch of launches) {
 		const value = Number(launch.value);
-		const monthKey = getMonthKey(launch.date);
+		const launchDate = parseLaunchDate(launch.date);
 
-		if (!monthKey || Number.isNaN(value)) continue;
+		if (!launchDate || Number.isNaN(value)) continue;
 
-		const currentMonth = months.get(monthKey) ?? {
-			monthKey,
-			monthLabel: getMonthLabel(monthKey),
+		const periodKey = getPeriodKey(launchDate, period);
+		const currentPeriod = periods.get(periodKey) ?? {
+			periodKey,
+			periodLabel: getPeriodLabel(periodKey, period),
 			income: 0,
 			expenses: 0,
 		};
 
 		if (launch.type === 'INCOME') {
-			currentMonth.income += value;
+			currentPeriod.income += value;
 		}
 
 		if (launch.type === 'EXPENSES') {
-			currentMonth.expenses += value;
+			currentPeriod.expenses += value;
 		}
 
-		months.set(monthKey, currentMonth);
+		periods.set(periodKey, currentPeriod);
 	}
 
-	return buildMonthRange(Array.from(months.keys())).map((monthKey) => {
+	return buildPeriodRange(Array.from(periods.keys()), period).map((periodKey) => {
 		return (
-			months.get(monthKey) ?? {
-				monthKey,
-				monthLabel: getMonthLabel(monthKey),
+			periods.get(periodKey) ?? {
+				periodKey,
+				periodLabel: getPeriodLabel(periodKey, period),
 				income: 0,
 				expenses: 0,
 			}
@@ -115,13 +183,32 @@ function buildMonthlyChartData(launches: Launch[]) {
 }
 
 export function ChartLineMultiple({ launches, isLoading, isError, onRetry }: ChartLineMultipleProps) {
-	const chartData = useMemo(() => buildMonthlyChartData(launches), [launches]);
+	const [selectedPeriod, setSelectedPeriod] = useState<ChartPeriod>('monthly');
+	const chartData = useMemo(() => buildChartDataByPeriod(launches, selectedPeriod), [launches, selectedPeriod]);
 
 	return (
 		<Card className='flex min-w-0 flex-1 flex-col'>
-			<CardHeader>
-				<CardTitle>Receitas e despesas</CardTitle>
-				<CardDescription>Variação mensal dos lançamentos</CardDescription>
+			<CardHeader className='flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between'>
+				<div className='space-y-1'>
+					<CardTitle>Receitas e despesas</CardTitle>
+					<CardDescription>{periodDescriptions[selectedPeriod]}</CardDescription>
+				</div>
+				<Select
+					value={selectedPeriod}
+					onValueChange={(value) => setSelectedPeriod(value as ChartPeriod)}
+				>
+					<SelectTrigger
+						className='w-full sm:w-36'
+						aria-label='Filtrar período do gráfico'
+					>
+						<SelectValue />
+					</SelectTrigger>
+					<SelectContent align='end'>
+						<SelectItem value='weekly'>Semanal</SelectItem>
+						<SelectItem value='monthly'>Mensal</SelectItem>
+						<SelectItem value='yearly'>Anual</SelectItem>
+					</SelectContent>
+				</Select>
 			</CardHeader>
 			<CardContent>
 				{isLoading && <DashboardLoadingState className='h-80' />}
@@ -154,7 +241,7 @@ export function ChartLineMultiple({ launches, isLoading, isError, onRetry }: Cha
 						>
 							<CartesianGrid vertical={false} />
 							<XAxis
-								dataKey='monthLabel'
+								dataKey='periodLabel'
 								tickLine={false}
 								axisLine={false}
 								tickMargin={8}

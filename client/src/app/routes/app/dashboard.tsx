@@ -155,64 +155,60 @@ export default function DashboardRoute() {
 					</p>
 				</div>
 
-				<div className='flex flex-col gap-3 lg:flex-row lg:items-center'>
-					<div className='grid grid-cols-2 gap-2 sm:flex sm:items-center'>
-						<Select
-							value={periodFilter.month}
-							onValueChange={(month) => setPeriodFilter((filter) => ({ ...filter, month }))}
-						>
-							<SelectTrigger className='h-9 w-full min-w-36 sm:w-40'>
-								<SelectValue placeholder='Mês' />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectGroup>
-									{monthOptions.map((month) => (
-										<SelectItem
-											key={month}
-											value={month}
-											className='capitalize'
-										>
-											{getMonthLabel(month)}
-										</SelectItem>
-									))}
-								</SelectGroup>
-							</SelectContent>
-						</Select>
+				<div className='grid w-full grid-cols-1 gap-2 min-[520px]:grid-cols-2 xl:w-auto xl:grid-cols-[10rem_10rem_auto_auto]'>
+					<Select
+						value={periodFilter.month}
+						onValueChange={(month) => setPeriodFilter((filter) => ({ ...filter, month }))}
+					>
+						<SelectTrigger className='w-full data-[size=default]:h-12 py-0'>
+							<SelectValue placeholder='Mês' />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								{monthOptions.map((month) => (
+									<SelectItem
+										key={month}
+										value={month}
+										className='capitalize'
+									>
+										{getMonthLabel(month)}
+									</SelectItem>
+								))}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
 
-						<Select
-							value={periodFilter.year}
-							onValueChange={(year) => setPeriodFilter((filter) => ({ ...filter, year }))}
-						>
-							<SelectTrigger className='h-9 w-full min-w-28 sm:w-32'>
-								<SelectValue placeholder='Ano' />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectGroup>
-									{yearOptions.map((year) => (
-										<SelectItem
-											key={year}
-											value={year}
-										>
-											{year}
-										</SelectItem>
-									))}
-								</SelectGroup>
-							</SelectContent>
-						</Select>
-					</div>
+					<Select
+						value={periodFilter.year}
+						onValueChange={(year) => setPeriodFilter((filter) => ({ ...filter, year }))}
+					>
+						<SelectTrigger className='w-full data-[size=default]:h-12 px-6 py-0'>
+							<SelectValue placeholder='Ano' />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectGroup>
+								{yearOptions.map((year) => (
+									<SelectItem
+										key={year}
+										value={year}
+									>
+										{year}
+									</SelectItem>
+								))}
+							</SelectGroup>
+						</SelectContent>
+					</Select>
 
-					<div className='flex flex-col md:flex-row gap-2 items-center'>
-						<Button
-							type='button'
-							variant='outline'
-							className='flex-1 cursor-pointer h-12 px-6 flex items-center'
-							onClick={() => setPeriodFilter(currentPeriod)}
-						>
-							<CalendarDays className='size-4' />
-							<span>Mês atual</span>
-						</Button>
-						<NewLaunchButton />
-					</div>
+					<Button
+						type='button'
+						variant='outline'
+						className='w-full cursor-pointer h-12 px-6 py-0 flex items-center xl:w-auto'
+						onClick={() => setPeriodFilter(currentPeriod)}
+					>
+						<CalendarDays className='size-4' />
+						<span>Mês atual</span>
+					</Button>
+					<NewLaunchButton className='w-full h-12 py-0 xl:w-auto' />
 				</div>
 			</div>
 
