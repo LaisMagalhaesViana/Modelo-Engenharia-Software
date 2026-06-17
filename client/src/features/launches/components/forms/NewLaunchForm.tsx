@@ -22,6 +22,12 @@ import DescriptionField from '../fields/DescriptionField';
 import LaunchTypeField from '../fields/LaunchTypeField';
 import MoneyValueField from '../fields/MoneyValueField';
 
+type ApiErrorResponse = {
+	error?: string;
+	message?: string;
+	statusCode: number;
+};
+
 export default function NewLaunchForm() {
 	const [successDialogOpen, setSuccessDialogOpen] = useState(false);
 	const navigate = useNavigate();
@@ -38,7 +44,11 @@ export default function NewLaunchForm() {
 		},
 	});
 
-	const launchMutation = useMutation({
+	const launchMutation = useMutation<
+		Awaited<ReturnType<typeof createLaunches>>,
+		AxiosError<ApiErrorResponse>,
+		LaunchRequestDto
+	>({
 		mutationFn: createLaunches,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['launches'] });
@@ -74,7 +84,7 @@ export default function NewLaunchForm() {
 		<Card className='flex-1 bg-transparent overflow-auto'>
 			<CardContent>
 				{launchMutation.isError && (
-					<div className='text-red-500 text-sm mb-3'>Erro ao criar lançamento, tente novamente</div>
+					<div className='text-red-500 text-sm mb-3'>{launchMutation.error.response?.data.message}</div>
 				)}
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<FieldGroup>

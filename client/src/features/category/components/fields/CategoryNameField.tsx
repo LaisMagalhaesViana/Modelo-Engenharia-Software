@@ -23,8 +23,14 @@ export default function CategoryNameField({ control }: CategoryNameFieldProps) {
 						type='text'
 						className='focus-visible:ring-[#1f7a6b] dark:bg-transparent h-14'
 						placeholder='Ex: Educação, Alimentação...'
+						maxLength={100}
 					/>
-					{fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+					<div className='flex justify-between'>
+						<div>{fieldState.invalid && <FieldError errors={[fieldState.error]} />}</div>
+						<div className='text-xs text-muted-foreground text-right'>
+							{field.value?.length || 0}/100 caracteres
+						</div>
+					</div>
 				</Field>
 			)}
 		/>

@@ -1,7 +1,7 @@
 import z from 'zod';
 
 export const CategoryFormSchema = z.object({
-	name: z.string().min(3, 'Insira um nome valido'),
+	name: z.string().min(1, 'Insira um nome valido').max(100, 'O nome deve ter no máximo 100 caracteres'),
 	type: z.string().min(1, 'Selecione o tipo'),
 	color: z
 		.string()

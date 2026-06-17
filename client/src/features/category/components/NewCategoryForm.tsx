@@ -9,10 +9,15 @@ import { Spinner } from '@/components/ui/spinner';
 import { useAuth } from '@/providers/AuthProvider';
 import { type CategoryFormData, CategoryFormSchema } from '../schemas/category.schema';
 import createCategory from '../services/createCategory';
+import type { CategoryRequestDto } from '../types/category.type';
 
 import CategoryColorField from './fields/CategoryColorField';
 import CategoryNameField from './fields/CategoryNameField';
 import CategoryTypeField from './fields/CategoryTypeField';
+
+type ApiErrorResponse = {
+	message?: string;
+};
 
 export default function NewCategoryForm() {
 	const { user } = useAuth();
@@ -26,7 +31,11 @@ export default function NewCategoryForm() {
 		},
 	});
 
-	const categoryMutation = useMutation({
+	const categoryMutation = useMutation<
+		Awaited<ReturnType<typeof createCategory>>,
+		AxiosError<ApiErrorResponse>,
+		CategoryRequestDto
+	>({
 		mutationFn: createCategory,
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['categories'] });
@@ -45,7 +54,9 @@ export default function NewCategoryForm() {
 		<Card className='bg-transparent overflow-auto'>
 			<CardContent>
 				{categoryMutation.isError && (
-					<div className='text-red-500 text-sm mb-3'>Erro ao criar categoria, tente novamente</div>
+					<div className='text-red-500 text-sm mb-3'>
+						{categoryMutation.error.response?.data.message ?? 'Erro ao criar categoria, tente novamente'}
+					</div>
 				)}
 				<form onSubmit={handleSubmit(onSubmit)}>
 					<FieldGroup>
