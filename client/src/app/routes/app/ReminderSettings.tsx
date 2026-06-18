@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { BellRing, Save } from 'lucide-react';
+import { BellRing, CheckCircle2, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -49,16 +49,24 @@ export default function ReminderSettingsRoute() {
 	const [active, setActive] = useState(false);
 	const [frequency, setFrequency] = useState<ReminderFrequency>('DAILY');
 	const [time, setTime] = useState('08:00');
+	const [showSavedPopup, setShowSavedPopup] = useState(false);
+	const [savedPopupDescription, setSavedPopupDescription] = useState('');
 	const reminderConfigQuery = useQuery({
 		queryKey: ['notifications', 'reminder-config'],
 		queryFn: getReminderConfig,
 	});
 	const updateConfigMutation = useMutation({
 		mutationFn: updateReminderConfig,
-		onSuccess: () => {
+		onSuccess: (_data, variables) => {
 			void queryClient.invalidateQueries({
 				queryKey: ['notifications', 'reminder-config'],
 			});
+			setSavedPopupDescription(
+				variables.active
+					? 'Você receberá um email no horário definido.'
+					: 'Você não receberá mais lembretes.',
+			);
+			setShowSavedPopup(true);
 		},
 	});
 
@@ -72,6 +80,16 @@ export default function ReminderSettingsRoute() {
 		setTime(config.time);
 	}, [reminderConfigQuery.data?.data]);
 
+	useEffect(() => {
+		if (!showSavedPopup) return;
+
+		const timeoutId = window.setTimeout(() => {
+			setShowSavedPopup(false);
+		}, 4000);
+
+		return () => window.clearTimeout(timeoutId);
+	}, [showSavedPopup]);
+
 	const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 		updateConfigMutation.mutate({ active, frequency, time });
@@ -79,6 +97,22 @@ export default function ReminderSettingsRoute() {
 
 	return (
 		<div className='p-4 sm:p-6 flex flex-col flex-1 min-w-0 space-y-4'>
+			{showSavedPopup ? (
+				<div
+					role='status'
+					aria-live='polite'
+					className='fixed top-4 right-4 z-50 flex w-[calc(100%-2rem)] max-w-sm items-start gap-3 rounded-lg border border-[#2fae8f]/30 bg-background p-4 text-sm shadow-lg ring-1 ring-foreground/5 sm:top-6 sm:right-6'
+				>
+					<div className='mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#1f7a6b] text-white'>
+						<CheckCircle2 className='size-4' />
+					</div>
+					<div className='min-w-0'>
+						<p className='font-semibold text-foreground'>Lembrete salvo</p>
+						<p className='mt-1 text-secondary-foreground'>{savedPopupDescription}</p>
+					</div>
+				</div>
+			) : null}
+
 			<div>
 				<h1 className='text-foreground font-bold text-xl'>Lembretes</h1>
 				<p className='text-sm text-secondary-foreground'>Configure quando o Siscodep deve lembrar você.</p>

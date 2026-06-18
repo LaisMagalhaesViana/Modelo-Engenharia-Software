@@ -56,7 +56,21 @@ export type FormForgotPasswordData = z.infer<typeof FormForgotPasswordDataSchema
 
 export const FormResetPasswordDataSchema = z
 	.object({
-		password: z.string().min(8, 'A senha deve ter no minimo 8 caracteres'),
+		password: z
+			.string()
+			.min(8, 'A senha deve ter no mínimo 8 caracteres')
+			.refine((val) => /[A-Z]/.test(val), {
+				message: 'A senha deve conter pelo menos uma letra maiúscula',
+			})
+			.refine((val) => /[a-z]/.test(val), {
+				message: 'A senha deve conter pelo menos uma letra minúscula',
+			})
+			.refine((val) => /[0-9]/.test(val), {
+				message: 'A senha deve conter pelo menos um número',
+			})
+			.refine((val) => /[^A-Za-z0-9]/.test(val), {
+				message: 'A senha deve conter pelo menos um símbolo (ex: !@#$%)',
+			}),
 		confirmPassword: z.string().min(8, 'Confirme sua senha'),
 	})
 	.refine((data) => data.password === data.confirmPassword, {
