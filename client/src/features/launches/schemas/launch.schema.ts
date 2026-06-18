@@ -1,4 +1,6 @@
 import z from 'zod';
+import { MAX_LAUNCH_VALUE_IN_CENTS, MAX_LAUNCH_VALUE_LABEL } from '../constants/moneyLimit';
+import { normalizeMoneyInputToCents } from '../utils/normalizeMoneyInputToCents';
 
 function getTodayDateInputValue() {
 	const today = new Date();
@@ -11,7 +13,15 @@ function getTodayDateInputValue() {
 
 export const launchFormSchema = z.object({
 	type: z.string().min(1, 'Selecione o tipo'),
-	value: z.string().min(0.01, 'Informe um valor válido'),
+	value: z
+		.string()
+		.min(1, 'Informe um valor válido')
+		.refine((value) => normalizeMoneyInputToCents(value) > 0, {
+			message: 'Informe um valor válido',
+		})
+		.refine((value) => normalizeMoneyInputToCents(value) <= MAX_LAUNCH_VALUE_IN_CENTS, {
+			message: `O valor deve ser menor ou igual a ${MAX_LAUNCH_VALUE_LABEL}`,
+		}),
 	date: z
 		.string()
 		.min(1, 'Informe a data')

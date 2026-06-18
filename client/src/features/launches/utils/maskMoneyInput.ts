@@ -1,3 +1,5 @@
+import { MAX_LAUNCH_VALUE_IN_CENTS } from '../constants/moneyLimit';
+
 export function maskMoneyInput(value: string, previousValue?: string): string {
 	const isDeleting = previousValue !== undefined && value.length < previousValue.length;
 
@@ -12,6 +14,10 @@ export function maskMoneyInput(value: string, previousValue?: string): string {
 	}
 
 	if (!numbers) return '';
+
+	if (Number(numbers) > MAX_LAUNCH_VALUE_IN_CENTS) {
+		return previousValue ?? '';
+	}
 
 	const amount = Number(numbers) / 100;
 
